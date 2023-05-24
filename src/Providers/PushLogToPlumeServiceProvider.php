@@ -34,7 +34,7 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/plume.php' => config_path('plume.php'),
+            __DIR__ . '/../../config/plume.php' => config_path('plume.php'),
         ]);
     }
 }
