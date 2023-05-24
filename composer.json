@@ -1,5 +1,5 @@
 {
-    "name": "wentao/push-log-to-plume",
+    "name": "wentao-php/push-log-to-plume",
     "type": "library",
     "description": "laravel 框架中，监听日志时间将日志传到plume服务中",
     "autoload": {
