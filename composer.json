@@ -1,0 +1,29 @@
+{
+    "name": "wentao/push-log-to-plume",
+    "type": "library",
+    "description": "laravel 框架中，监听日志时间将日志传到plume服务中",
+    "autoload": {
+        "psr-4": {
+            "Wentao\\PushLogToPlume\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "wentao",
+            "email": "taowen@pharmaoryx.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.10"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wentao\\PushLogToPlume\\Providers\\PushLogToPlumeServiceProvider"
+            ]
+        }
+    }
+}
