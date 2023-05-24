@@ -1,0 +1,21 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'zookeeper'
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+  kafka:
+    image: 'bitnami/kafka'
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=10.60.36.227:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://10.60.36.227:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - ALLOW_PLAINTEXT_LISTENER=yes
