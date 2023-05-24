@@ -3,6 +3,7 @@
 return [
     'is_enabled' => env('PLUME_IS_ENABLED',  false),
     'app_name' => env('PLUME_APP_NAME', ''),
+    'driver' => env('PLUME_DRIVER', 'redis'),
     'redis' => [
         'prefix' => '',
         'timeout' => 1,
@@ -12,4 +13,7 @@ return [
         'port' => env('PLUME_REDIS_PORT', '6379'),
         'database' => env('PLUME_REDIS_DB', '0'),
     ],
+    'kafka' => [
+
+    ]
 ];

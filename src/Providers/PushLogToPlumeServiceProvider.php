@@ -11,9 +11,9 @@ namespace Wentao\PushLogToPlume\Providers;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Redis\RedisManager;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Junges\Kafka\Facades\Kafka;
 use Wentao\PushLogToPlume\Listeners\PushLogToPlumeListener;
 
 class PushLogToPlumeServiceProvider extends ServiceProvider
@@ -23,10 +23,20 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
         if (config('plume.is_enabled')) {
             $this->app['events']->listen(MessageLogged::class, [PushLogToPlumeListener::class, 'handle']);
             $this->app->singleton('logging.plume.traceId', fn() => Str::uuid()->toString());
-            $this->app->singleton('logging.plume.redis', function ($app) {
+            $this->app->singleton('logging.plume.queue', function ($app) {
                 $config = config('plume');
-                $database_redis_config = config('database.redis');
-                return (new RedisManager($app, Arr::pull($database_redis_config, 'client', 'phpredis'), $config))->connection('redis');
+                if ($config['driver'] == 'redis') {
+                    $database_redis_config = config('database.redis');
+                    return (new RedisManager($app, Arr::pull($database_redis_config, 'client', 'phpredis'), $config))->connection('redis');
+                } else {
+                    $config = $config['kafka'];
+                    $producer = Kafka::publishOn($config['topic'])
+                        ->withConfigOptions(['key' => 'value'])
+                        ->withKafkaKey('kafka-key')
+                        ->withHeaders(['header-key' => 'header-value']);
+                    $producer->send();
+                }
+
             });
         }
     }
