@@ -24,9 +24,9 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
             $this->app['events']->listen(MessageLogged::class, [PushLogToPlumeListener::class, 'handle']);
             $this->app->singleton('logging.plume.traceId', fn() => Str::uuid()->toString());
             $this->app->singleton('logging.plume.redis', function ($app) {
-                $config = config('plume.redis');
+                $config = config('plume');
                 $database_redis_config = config('database.redis');
-                return new RedisManager($app, Arr::pull($database_redis_config, 'client', 'phpredis'), $config);
+                return (new RedisManager($app, Arr::pull($database_redis_config, 'client', 'phpredis'), $config))->connection('redis');
             });
         }
     }
