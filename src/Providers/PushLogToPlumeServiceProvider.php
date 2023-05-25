@@ -22,8 +22,7 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
     {
         if (config('plume.is_enabled')) {
             $this->app['events']->listen(MessageLogged::class, [PushLogToPlumeListener::class, 'handle']);
-            $this->app->singleton('logging.plume.traceId', fn() => Str::uuid()->toString());
-            $this->app->singleton('logging.plume.queue', function () {
+            $this->app->singleton('logging.plume.transport', function () {
                 $config = config('plume');
                 return match ($config['driver']) {
                     'redis' => new ByRedis($config),

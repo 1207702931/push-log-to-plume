@@ -10,11 +10,12 @@ namespace Wentao\PushLogToPlume\Listeners;
 
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Wentao\PushLogToPlume\Transport\Message;
 
 class PushLogToPlumeListener
 {
-    private static $uuid;
+    private static string $uuid;
     const PUSH_ERROR_MESSAGE = 'plume push error: ';
 
     public function __construct()
@@ -30,18 +31,20 @@ class PushLogToPlumeListener
         # 单个请求用同一个的 traceId
         if (self::$uuid == null) {
             // TODO: 链路追踪
-            self::$uuid = request()->header('sw8') ?: app('logging.plume.traceId');
+            self::$uuid = request()->header('sw8') ?: Str::uuid()->toString();
         }
         $content = $event->context;
         if ($content['exception'] ?? false) {
             $content['exception'] = $content['exception']->getTraceAsString();
         }
 
-        $message = new Message(self::$uuid, strtoupper($event->level), json_encode($content, JSON_UNESCAPED_UNICODE));
+        $message = new Message(self::$uuid, strtoupper($event->level), json_encode([
+            'message' => $event->message,
+            'content' => $content
+        ], JSON_UNESCAPED_UNICODE));
 
         try {
-            // 推入 plume 服务的 redis 队列
-            app('logging.plume.redis')->send($message);
+            app('logging.plume.transport')->send($message);
         } catch (\Exception $e) {
             Log::error(self::PUSH_ERROR_MESSAGE . $e->getMessage());
         }
