@@ -15,7 +15,7 @@ use Wentao\PushLogToPlume\Transport\Message;
 
 class PushLogToPlumeListener
 {
-    private static string $uuid;
+    private static ?string $uuid = null;
     const PUSH_ERROR_MESSAGE = 'plume push error: ';
 
     public function __construct()
