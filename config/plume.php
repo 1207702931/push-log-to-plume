@@ -1,9 +1,14 @@
 <?php
 
 return [
-    'is_enabled' => env('PLUME_IS_ENABLED',  false),
-    'app_name' => env('PLUME_APP_NAME', ''),
-    'driver' => env('PLUME_DRIVER', 'redis'),
+    'is_enabled' => env('PLUME_IS_ENABLED',  false), # 是否启用
+    'app_name' => env('PLUME_APP_NAME', ''), # 应用名称
+    'driver' => env('PLUME_DRIVER', 'redis'), # plume_log服务 模式 支持 http, redis, kafka
+    'queue_name' => env('PLUME_QUEUE_NAME', 'plume_log_list'),
+    'trace_deep' => env('PLUME_TRACE_DEEP', 8),
+    'http' => [
+        'host' => env('PLUME_HTTP_HOST', '127.0.0.1:8891'),
+    ],
     'redis' => [
         'prefix' => '',
         'timeout' => 1,
@@ -14,6 +19,7 @@ return [
         'database' => env('PLUME_REDIS_DB', '0'),
     ],
     'kafka' => [
-
+        'host' => env('PLUME_KAFKA_HOST', '127.0.0.1:9092'),
+        'timeout' => env('PLUME_KAFKA_TIMEOUT', 1),
     ]
 ];
