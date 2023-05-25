@@ -10,7 +10,7 @@ namespace Wentao\PushLogToPlume\Providers;
 
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use Wentao\PushLogToPlume\Console\Commands\PushLogToPlumeCommand;
 use Wentao\PushLogToPlume\Listeners\PushLogToPlumeListener;
 use Wentao\PushLogToPlume\Transport\ByHttp;
 use Wentao\PushLogToPlume\Transport\ByKafka;
@@ -20,6 +20,11 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PushLogToPlumeCommand::class
+            ]);
+        }
         if (config('plume.is_enabled')) {
             $this->app['events']->listen(MessageLogged::class, [PushLogToPlumeListener::class, 'handle']);
             $this->app->singleton('logging.plume.transport', function () {
@@ -34,10 +39,11 @@ class PushLogToPlumeServiceProvider extends ServiceProvider
         }
     }
 
-    public function boot(): void
+    public
+    function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../../config/plume.php' => config_path('plume.php'),
-        ]);
+        ], 'push-log-to-plume');
     }
 }
