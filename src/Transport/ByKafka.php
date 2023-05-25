@@ -25,16 +25,10 @@ class ByKafka implements Transport
         $kafka_config->setUpdateBrokers(true);
         $kafka_config->setAcks(-1);
         $this->producer = new Producer($kafka_config);
-
     }
 
     public function send(Message $message): void
     {
         $this->producer->send(config('plume.queue_name'), $message->toString());
-    }
-
-    public function __destruct()
-    {
-        $this->producer->close();
     }
 }
