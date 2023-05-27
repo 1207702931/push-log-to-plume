@@ -25,7 +25,7 @@ class Message
      */
     private string $appName;
     private string $serverName;
-    private string $dtTime;
+    private int $dtTime;
     private string $traceId;
     private string $content;
     private string $logLevel;
@@ -39,7 +39,7 @@ class Message
         [$float, $timestamp] = explode(' ', microtime());
         $this->appName = config('plume.app_name');
         $this->serverName = request()->ip();
-        $this->dtTime = $timestamp . substr($float, 2, 3);
+        $this->dtTime = (int)($timestamp . substr($float, 2, 3));
         $this->dateTime = date('Y-m-d H:i:s');
         // 利用参数判断，获取产生日志的类，方法。可能不太准确。由于 debug_backtrace 会消耗一定的性能，所以加参数才记录
         if (request()->input('logging') == 'trace') {
