@@ -30,8 +30,25 @@ class PushLogToPlumeListener
         }
         # 单个请求用同一个的 traceId
         if (self::$uuid == null) {
-            // TODO: 链路追踪
-            self::$uuid = request()->header('sw8') ?: Str::uuid()->toString();
+            // 首先从 header 中获取，header 中没有再获取 常量中的 SW_TRACE_ID，再没有就自己生成
+            // 这里是结合 skywalking 的 链路追踪，
+            // java 开启了 skywalking 的链路追踪 Java调用 php 接口 时会在 header 中加上特定值
+            // 如何使PHP启动此时 skywalking_agent php 二开后加入了常量 SW_TRACE_ID
+            // 如果没有开启则 自己生成 日志的请求ID
+
+            if ($h_sw8 = request()->header('sw8')) {
+                // header
+                $e_h_sw8 = explode('-', $h_sw8);
+                if (count($e_h_sw8) == 8) {
+                    self::$uuid = base64_encode($e_h_sw8[1]);
+                }
+            } elseif (defined('SW_TRACE_ID')) {
+                // 常量
+                self::$uuid = constant("SW_TRACE_ID");
+            } else {
+                self::$uuid = Str::uuid()->toString();
+            }
+
         }
         $content = $event->context;
         if ($content['exception'] ?? false) {
