@@ -40,7 +40,7 @@ class PushLogToPlumeListener
                 // header
                 $e_h_sw8 = explode('-', $h_sw8);
                 if (count($e_h_sw8) == 8) {
-                    self::$uuid = base64_encode($e_h_sw8[1]);
+                    self::$uuid = base64_decode($e_h_sw8[1]);
                 }
             } elseif (defined('SW_TRACE_ID')) {
                 // 常量
