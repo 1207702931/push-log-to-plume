@@ -1,7 +1,7 @@
 {
     "name": "wentao-php/push-log-to-plume",
     "type": "library",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "laravel 框架中，监听日志时间将日志传到plume服务中",
     "autoload": {
         "psr-4": {
